@@ -1,5 +1,3 @@
-#!/bin/bash
-set -e
 DEPLOY_UID=$(cat /proc/sys/kernel/random/uuid)
 DISPOSABLE_ENV_NAME=some_app__${DEPLOY_UID}
 echo PRETENDING TO CREATE DISPOSABLE ENVIRONMENT $DISPOSABLE_ENV_NAME AND DEPLOY TO IT...
