@@ -36,24 +36,37 @@ jobs:
       image: docker:///busybox
       inputs:
         - name: test-environments
+        - name: git-example
       run: 
         path: sh
         args: ["git-example/pretend-scripts/test.sh"]
-  #TODO: teardown env
-  - put: test-environments
-    params: {remove: test-environments}
+    ensure:
+      do:
+        - task: teardown-environment
+          config:
+            platform: linux
+            image: docker:///busybox
+            inputs:
+              - name: test-environments
+              - name: git-example
+            run: 
+              path: sh
+              args: ["git-example/pretend-scripts/teardown.sh"]
+        - put: test-environments
+          params: {remove: test-environments}
 
 resources:  
 - name: git-example
   type: git
   source:
-    uri: https://github.com/moredip/concourse-disposable-test-env-example.git
+    uri: git@github.com:moredip/concourse-disposable-test-env-example.git
     branch: master
+    private_key: {{github_deploy_key}}
 
 - name: test-environments
   type: pool
   source:
-    uri: https://github.com/moredip/concourse-disposable-test-env-example.git
+    uri: git@github.com:moredip/concourse-disposable-test-env-example.git
     branch: locks
-    pool: test-env
+    pool: pools/disposable-environments
     private_key: {{github_deploy_key}}
